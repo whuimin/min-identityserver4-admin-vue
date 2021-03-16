@@ -1,25 +1,39 @@
 import router from './router'
 import store from './store'
-import storage from 'store'
 import NProgress from 'nprogress' // progress bar
 import '@/components/NProgress/nprogress.less' // progress bar custom style
 import notification from 'ant-design-vue/es/notification'
 import { setDocumentTitle, domTitle } from '@/utils/domUtil'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { i18nRender } from '@/locales'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const allowList = ['login', 'register', 'registerResult'] // no redirect allowList
+const allowList = [
+  'login',
+  'register',
+  'registerResult',
+  'oidcLogin',
+  'signin',
+  'signinSilent',
+  'oidcLogout',
+  'signout',
+  'signoutCallback',
+  'oidcSuccess',
+  'oidcError'
+] // no redirect allowList
 const loginRoutePath = '/user/login'
+const loginRoutePathIds4 = '/oidc/login'
 const defaultRoutePath = '/dashboard/workplace'
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
-  to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`))
+  to.meta && typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`)
+
+  const useIds4 = process.env.VUE_APP_USE_IDS4
+
   /* has token */
-  if (storage.get(ACCESS_TOKEN)) {
-    if (to.path === loginRoutePath) {
+  if (store.getters.token) {
+    if (to.path === loginRoutePath || to.path === loginRoutePathIds4) {
       next({ path: defaultRoutePath })
       NProgress.done()
     } else {
@@ -53,7 +67,11 @@ router.beforeEach((to, from, next) => {
             })
             // 失败时，获取用户信息失败时，调用登出，来清空历史保留信息
             store.dispatch('Logout').then(() => {
-              next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+              if (useIds4) {
+                next({ path: loginRoutePathIds4, query: { redirect: to.fullPath } })
+              } else {
+                next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+              }
             })
           })
       } else {
@@ -65,7 +83,11 @@ router.beforeEach((to, from, next) => {
       // 在免登录名单，直接进入
       next()
     } else {
-      next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+      if (useIds4) {
+        next({ path: loginRoutePathIds4, query: { redirect: to.fullPath } })
+      } else {
+        next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+      }
       NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
     }
   }

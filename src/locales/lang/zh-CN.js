@@ -5,10 +5,13 @@ import global from './zh-CN/global'
 import menu from './zh-CN/menu'
 import setting from './zh-CN/setting'
 import user from './zh-CN/user'
+
 import dashboard from './zh-CN/dashboard'
 import form from './zh-CN/form'
 import result from './zh-CN/result'
 import account from './zh-CN/account'
+
+import oidc from './zh-CN/oidc'
 
 const components = {
   antLocale: antd,
@@ -30,5 +33,6 @@ export default {
   ...dashboard,
   ...form,
   ...result,
-  ...account
+  ...account,
+  ...oidc
 }

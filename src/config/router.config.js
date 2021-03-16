@@ -267,6 +267,53 @@ export const asyncRouterMap = [
             ]
           }
         ]
+      },
+
+      // Identity Server4 Admin
+      {
+        path: '/ids4',
+        component: RouteView,
+        redirect: '/ids4/client-list',
+        name: 'ids4',
+        meta: { title: 'menu.ids4', icon: 'user', keepAlive: true, permission: ['user'] },
+        children: [
+          {
+            path: 'api-scope-list',
+            name: 'apiScopeList',
+            component: () => import('@/views/ids4/apiScope/List'),
+            meta: { title: 'menu.ids4.api-scope-list', keepAlive: true, permission: ['user'] }
+          },
+          {
+            path: 'api-resource-list',
+            name: 'apiResourceList',
+            component: () => import('@/views/ids4/apiResource/List'),
+            meta: { title: 'menu.ids4.api-resource-list', keepAlive: true, permission: ['user'] }
+          },
+          {
+            path: 'identity-resource-list',
+            name: 'identityResourceList',
+            component: () => import('@/views/ids4/identityResource/List'),
+            meta: { title: 'menu.ids4.identity-resource-list', keepAlive: true, permission: ['user'] }
+          },
+          {
+            path: 'client-list',
+            name: 'clientList',
+            component: () => import('@/views/ids4/client/List'),
+            meta: { title: 'menu.ids4.client-list', keepAlive: true, permission: ['user'] }
+          },
+          {
+            path: 'device-flow-code-list',
+            name: 'deviceFlowCodeList',
+            component: () => import('@/views/ids4/deviceFlowCode/List'),
+            meta: { title: 'menu.ids4.device-flow-code-list', keepAlive: true, permission: ['user'] }
+          },
+          {
+            path: 'persisted-grant-list',
+            name: 'persistedGrantList',
+            component: () => import('@/views/ids4/persistedGrant/List'),
+            meta: { title: 'menu.ids4.persisted-grant-list', keepAlive: true, permission: ['user'] }
+          }
+        ]
       }
 
       // other
@@ -373,7 +420,53 @@ export const constantRouterMap = [
       }
     ]
   },
-
+  {
+    path: '/oidc',
+    component: UserLayout,
+    hidden: true,
+    children: [
+      {
+        path: 'login',
+        name: 'oidcLogin',
+        component: () => import('@/views/oidc/Login')
+      },
+      {
+        path: 'signin',
+        name: 'signin',
+        component: () => import('@/views/oidc/Signin')
+      },
+      {
+        path: 'signin-silent',
+        name: 'signinSilent',
+        component: () => import('@/views/oidc/SigninSilent')
+      },
+      {
+        path: 'logout',
+        name: 'oidcLogout',
+        component: () => import('@/views/oidc/Logout')
+      },
+      {
+        path: 'signout',
+        name: 'signout',
+        component: () => import('@/views/oidc/Signout')
+      },
+      {
+        path: 'signout-callback',
+        name: 'signoutCallback',
+        component: () => import('@/views/oidc/SignoutCallback')
+      },
+      {
+        path: 'success',
+        name: 'oidcSuccess',
+        component: () => import('@/views/oidc/Success')
+      },
+      {
+        path: 'error',
+        name: 'oidcError',
+        component: () => import('@/views/oidc/Error')
+      }
+    ]
+  },
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')

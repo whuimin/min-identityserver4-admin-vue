@@ -12,7 +12,8 @@ import {
   TOGGLE_WEAK,
   TOGGLE_MULTI_TAB,
   // i18n
-  APP_LANGUAGE
+  APP_LANGUAGE,
+  REDIRECT_URI
 } from '@/store/mutation-types'
 import { loadLanguageAsync } from '@/locales'
 
@@ -30,7 +31,8 @@ const app = {
     weak: false,
     multiTab: true,
     lang: 'en-US',
-    _antLocale: {}
+    _antLocale: {},
+    redirectUri: ''
   },
   mutations: {
     [SIDEBAR_TYPE]: (state, type) => {
@@ -80,17 +82,23 @@ const app = {
     [TOGGLE_MULTI_TAB]: (state, bool) => {
       storage.set(TOGGLE_MULTI_TAB, bool)
       state.multiTab = bool
+    },
+    [REDIRECT_URI]: (state, redirectUri) => {
+      state.redirectUri = redirectUri
+      storage.set(REDIRECT_URI, redirectUri)
     }
   },
   actions: {
     setLang ({ commit }, lang) {
       return new Promise((resolve, reject) => {
         commit(APP_LANGUAGE, lang)
-        loadLanguageAsync(lang).then(() => {
-          resolve()
-        }).catch((e) => {
-          reject(e)
-        })
+        loadLanguageAsync(lang)
+          .then(() => {
+            resolve()
+          })
+          .catch(e => {
+            reject(e)
+          })
       })
     }
   }

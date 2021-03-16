@@ -5,12 +5,18 @@ import {
   APP_LANGUAGE,
   TOGGLE_CONTENT_WIDTH,
   TOGGLE_FIXED_HEADER,
-  TOGGLE_FIXED_SIDEBAR, TOGGLE_HIDE_HEADER,
-  TOGGLE_LAYOUT, TOGGLE_NAV_THEME, TOGGLE_WEAK,
-  TOGGLE_COLOR, TOGGLE_MULTI_TAB
+  TOGGLE_FIXED_SIDEBAR,
+  TOGGLE_HIDE_HEADER,
+  TOGGLE_LAYOUT,
+  TOGGLE_NAV_THEME,
+  TOGGLE_WEAK,
+  TOGGLE_COLOR,
+  TOGGLE_MULTI_TAB,
+  REDIRECT_URI
 } from '@/store/mutation-types'
 import { printANSI } from '@/utils/screenLog'
 import defaultSettings from '@/config/defaultSettings'
+import oidcUserManager from '@/utils/oidcUserManager'
 
 export default function Initializer () {
   printANSI() // 请自行移除该行.  please remove this line
@@ -24,8 +30,26 @@ export default function Initializer () {
   store.commit(TOGGLE_WEAK, storage.get(TOGGLE_WEAK, defaultSettings.colorWeak))
   store.commit(TOGGLE_COLOR, storage.get(TOGGLE_COLOR, defaultSettings.primaryColor))
   store.commit(TOGGLE_MULTI_TAB, storage.get(TOGGLE_MULTI_TAB, defaultSettings.multiTab))
+  store.commit(REDIRECT_URI, storage.get(REDIRECT_URI))
   store.commit('SET_TOKEN', storage.get(ACCESS_TOKEN))
 
   store.dispatch('setLang', storage.get(APP_LANGUAGE, 'en-US'))
   // last step
+
+  if (process.env.VUE_APP_USE_IDS4) {
+    oidcUserManager.events.addUserLoaded(user => {
+      console.log('User loaded')
+      store.dispatch('Login', user).catch(e => {
+        console.error(e)
+      })
+    })
+    oidcUserManager.events.addUserUnloaded(() => {
+      console.log('User logged out locally')
+      store.dispatch('Logout').catch(e => {
+        console.error(e)
+      })
+    })
+
+    oidcUserManager.startSilentRenew()
+  }
 }
