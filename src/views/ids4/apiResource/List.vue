@@ -17,7 +17,7 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="Enabled">
-                  <a-select placeholder="Please Select" default-value="">
+                  <a-select v-model="queryParamEnabled" placeholder="Please Select">
                     <a-select-option value="">All</a-select-option>
                     <a-select-option value="false">False</a-select-option>
                     <a-select-option value="true">True</a-select-option>
@@ -256,6 +256,17 @@ export default {
       },
       selectedRowKeys: [],
       selectedRows: []
+    }
+  },
+  computed: {
+    queryParamEnabled: {
+      get () {
+        return this.queryParam.enabled?.toString() ?? ''
+      },
+      set (value) {
+        const enabled = value === 'true' ? true : value === 'false' ? false : null
+        this.queryParam = { ...this.queryParam, enabled }
+      }
     }
   },
   methods: {
